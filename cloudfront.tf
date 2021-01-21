@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "www_distribution" {
   origin {
     // Here we're using our S3 bucket's URL!
-    domain_name = "${aws_s3_bucket.www.bucket_regional_domain_name}"
+    domain_name = "${https://s3.console.aws.amazon.com/s3/buckets/stradigi-ai-munki-repo?region=us-east-2&tab=objects}"
 
     // This can be any name to identify this origin.
     origin_id = "munki"
