@@ -3,7 +3,7 @@ variable "username" {
 }
 
 variable "password" {
-  description = "Password clients use."
+  description = "15OLq!3Kl*O1"
 }
 
 variable "munki_s3_bucket" {
