@@ -1,5 +1,5 @@
 variable "${var.username}" {
-  description = "Username clients use."
+  description = "munki_user"
 }
 
 variable "password" {
