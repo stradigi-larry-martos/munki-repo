@@ -1,4 +1,4 @@
-variable "${var.username}" {
+variable "username" {
   description = "munki_user"
 }
 
