@@ -3,11 +3,11 @@ variable "username" {
 }
 
 variable "password" {
-  description = "15OLq!3Kl*O1"
+  description = "{var.password}"
 }
 
 variable "munki_s3_bucket" {
-  description = "stradigi-ai-munki-repo"
+  description = "{var.munki_s3_bucket}"
 }
 
 variable "prefix" {
