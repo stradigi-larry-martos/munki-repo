@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "www_distribution" {
   origin {
     // Here we're using our S3 bucket's URL!
-    domain_name = "https://s3.console.aws.amazon.com/s3/buckets/stradigi-ai-munki-repo?region=us-east-2&tab=objects"
+    domain_name = "${aws_s3_bucket.www.bucket_regional_domain_name}"
 
     // This can be any name to identify this origin.
     origin_id = "munki"
@@ -29,9 +29,9 @@ resource "aws_cloudfront_distribution" "www_distribution" {
 
     // This needs to match the `origin_id` above.
     target_origin_id = "munki"
-    min_ttl          = 0
-    default_ttl      = 86400
-    max_ttl          = 31536000
+    min_ttl          = "${var.default_cache_behavior_min_ttl}"
+    default_ttl      = "${var.default_cache_behavior_default_ttl}"
+    max_ttl          = "${var.default_cache_behavior_max_ttl}"
 
     forwarded_values {
       query_string = false
@@ -54,9 +54,9 @@ resource "aws_cloudfront_distribution" "www_distribution" {
     compress               = true
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    min_ttl                = 0
-    default_ttl            = 30
-    max_ttl                = 60
+    min_ttl                = "${var.catalogs_ordered_cache_behavior_min_ttl}"
+    default_ttl            = "${var.catalogs_ordered_cache_behavior_default_ttl}"
+    max_ttl                = "${var.catalogs_ordered_cache_behavior_max_ttl}"
     target_origin_id       = "munki"
 
     forwarded_values {
@@ -70,9 +70,6 @@ resource "aws_cloudfront_distribution" "www_distribution" {
 
   ordered_cache_behavior {
     path_pattern = "/manifests/*"
-    min_ttl      = 0
-    default_ttl  = 30
-    max_ttl      = 60
 
     lambda_function_association {
       event_type = "viewer-request"
@@ -83,6 +80,35 @@ resource "aws_cloudfront_distribution" "www_distribution" {
     compress               = true
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
+    min_ttl                = "${var.manifests_ordered_cache_behavior_min_ttl}"
+    default_ttl            = "${var.manifests_ordered_cache_behavior_default_ttl}"
+    max_ttl                = "${var.manifests_ordered_cache_behavior_max_ttl}"
+    target_origin_id       = "munki"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern = "/icons/*"
+
+    lambda_function_association {
+      event_type = "viewer-request"
+      lambda_arn = "${aws_lambda_function.basic_auth_lambda.arn}:${aws_lambda_function.basic_auth_lambda.version}"
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    min_ttl                = "${var.icons_ordered_cache_behavior_min_ttl}"
+    default_ttl            = "${var.icons_ordered_cache_behavior_default_ttl}"
+    max_ttl                = "${var.icons_ordered_cache_behavior_max_ttl}"
     target_origin_id       = "munki"
 
     forwarded_values {
@@ -106,5 +132,5 @@ resource "aws_cloudfront_distribution" "www_distribution" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  comment = 
+  comment = "Some comment"
 }
