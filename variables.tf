@@ -1,4 +1,4 @@
-variable "username" {
+variable "${var.username}" {
   description = "Username clients use."
 }
 
@@ -7,7 +7,7 @@ variable "password" {
 }
 
 variable "munki_s3_bucket" {
-  description = "The name of your s3 Bucket"
+  description = "stradigi-ai-munki-repo"
 }
 
 variable "prefix" {
